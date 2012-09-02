@@ -1,0 +1,14 @@
+Server_Main.o: Server_Main.cpp Game.h World.h Agent.h Packet.h Player.h \
+ lua.h
+Client_Main.o: Client_Main.cpp Game.h World.h Agent.h Packet.h Player.h \
+ GameRenderer.h Sprite3D.h TileSet.h ResourceManager.h
+lua.o: lua.cpp lua.h
+Agent.o: Agent.cpp Agent.h Packet.h
+World.o: World.cpp World.h Agent.h Packet.h
+TileSet.o: TileSet.cpp TileSet.h
+GameRenderer.o: GameRenderer.cpp GameRenderer.h Game.h World.h Agent.h \
+ Packet.h Player.h Sprite3D.h TileSet.h ResourceManager.h
+Player.o: Player.cpp Player.h Agent.h Packet.h World.h
+Game.o: Game.cpp Game.h World.h Agent.h Packet.h Player.h
+Sprite3D.o: Sprite3D.cpp Sprite3D.h
+Packet.o: Packet.cpp Packet.h

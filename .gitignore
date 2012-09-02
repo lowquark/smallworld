@@ -1,0 +1,9 @@
+*.o
+*.exe
+*.xcf
+*.swp
+smallworld
+smallworld-server
+screens/
+backup/
+publish/
