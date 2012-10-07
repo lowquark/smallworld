@@ -3,7 +3,7 @@
 using namespace std;
 
 
-World::World()
+World::World() : m_terrain(20, 20)
 {
 }
 World::~World()
@@ -15,22 +15,19 @@ void World::tick()
 {
 	for(auto & agentA : m_agentList)
 	{
-		if(agentA)
+		for(auto & agentB : m_agentList)
 		{
-			for(auto & agentB : m_agentList)
+			if(agentA != agentB)
 			{
-				if(agentB && agentA != agentB)
+				dl::Vector3D aToB = dl::Vector3D(agentB->getPosition() - agentA->getPosition());
+
+				float dist = aToB.magnitude();
+
+				if(dist < .65 && dist != 0)
 				{
-					dl::Vector3D aToB = dl::Vector3D(agentB->getPosition() - agentA->getPosition());
-
-					float dist = aToB.magnitude();
-
-					if(dist < .65 && dist != 0)
-					{
-						float force = 2000/dist;
-						agentA->push(dl::Vector2D(aToB.normal()*-force));
-						agentB->push(dl::Vector2D(aToB.normal()*force));
-					}
+					float force = 2000/dist;
+					agentA->push(dl::Vector2D(aToB.normal()*-force));
+					agentB->push(dl::Vector2D(aToB.normal()*force));
 				}
 			}
 		}
@@ -38,21 +35,20 @@ void World::tick()
 
 	for(auto & agent : m_agentList)
 	{
-		if(agent)
-			agent->tick();
+		//if(agent)
+			agent->tick(m_terrain);
 	}
 }
 
 void World::updateAgent(const packet::Agent * _agentPacket)
 {
 	Agent * agent = getAgent(_agentPacket->agentId);
-	
+
 	if(!agent)
 	{
 		agent = addAgent(_agentPacket->agentId); //Will only add if it's not already there
 	}
-
-	if(agent)
+	else
 	{
 		_agentPacket->update(agent);
 	}
@@ -124,4 +120,9 @@ void World::clearAgents()
 
 		m_agentList.pop_back();
 	}
+}
+
+const Terrain & World::getTerrain() const
+{
+	return m_terrain;
 }

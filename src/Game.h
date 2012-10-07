@@ -11,10 +11,20 @@ class Game
 {
   public:
 
+	static const int MAX_PLAYERS = 16;
+
+  private:
+
+	std::string m_name;
+
+	World m_world;
+
+	Player * m_playerList[MAX_PLAYERS];
+
+  public:
+
 	Game();
 	~Game();
-
-	static const int MAX_PLAYERS = 16;
 
 	void tick();
 
@@ -34,14 +44,6 @@ class Game
 	void setName(std::string & _name);
 
 	const World & getWorld() const;
-
-  private:
-
-	std::string m_name;
-
-	World m_world;
-
-	Player * m_playerList[MAX_PLAYERS];
 };
 
 #endif

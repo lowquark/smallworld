@@ -5,7 +5,6 @@
 #include <enet/enet.h>
 #include <iostream>
 #include <sstream>
-//#include <cstring>
 #include <vector>
 
 #include <DL/Time.h>
@@ -16,18 +15,6 @@ ENetHost * host = 0;
 
 lua_State * luaState = luaL_newstate();
 Game game;
-
-struct Client
-{
-	ENetAddress address;
-	const Player * player;
-
-	Client(ENetAddress _address, const Player * _player) : address(_address), player(_player)
-	{
-	}
-};
-
-vector<Client> clientList;
 
 std::string ipStr(enet_uint32 _ip)
 {
@@ -133,7 +120,7 @@ void handleJoinRequest(packet::JoinRequest * _packet, ENetPeer * _peer)
 				Agent * agent = game.addAgent(info.name);
 				response.setAsOk(player->getId(), agent->getId());
 
-				agent->setController(player);
+				player->setAgent(agent);
 			}
 
 			_peer->data = player;
@@ -252,7 +239,9 @@ int main(int _argc, char ** _argv)
 			}
 			else if(event.type == ENET_EVENT_TYPE_DISCONNECT)
 			{
+				((Player *)event.peer->data)->getAgent()->setController(0);
 				game.removePlayer((Player *)event.peer->data);
+
 				cout << "A client disconnected from " << ipStr(event.peer->address.host) << " on port " << event.peer->address.port << endl;
 
 				event.peer->data = 0;

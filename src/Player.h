@@ -32,7 +32,7 @@ class Player : public AgentController
 
 	Player(int _id = -1);
 
-	void tick(Agent * _agent) const override;
+	void tick() const override;
 
 	int getId() const;
 

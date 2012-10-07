@@ -5,5 +5,6 @@
 smallworld
 smallworld-server
 screens/
+build/
 backup/
 publish/

@@ -3,38 +3,6 @@
 using namespace std;
 
 
-packet::Player::Player(const ::Player * _player) : packet::Base(PACKETID)
-{
-	playerId = _player->m_id;
-
-	strncpy(name, _player->m_name.c_str(), packet::maxNameLength);
-	name[packet::maxNameLength] = '\0';
-
-	//followedAgentId = _player->m_followedAgent ? _player->m_followedAgent->getId() : -1;
-
-	for(int i = 0;i < ::Player::KEYNUM;i ++)
-	{
-		keyStates[i] = _player->m_keyStates[i];
-	}
-}
-void packet::Player::update(::Player * _player, const World & _world) const
-{
-	_player->m_name = name;
-
-	/*
-	if((_player->m_followedAgent && followedAgentId != _player->m_followedAgent->getId()) || (!_player->m_followedAgent && followedAgentId != -1))
-	{
-		_player->m_followedAgent = _world.getAgent(followedAgentId);
-	}
-	*/
-
-	for(int i = 0;i < ::Player::KEYNUM;i ++)
-	{
-		_player->m_keyStates[i] = keyStates[i];
-	}
-}
-
-
 Player::Player(int _id) : m_id(_id)
 {
 	for(int i = 0;i < KEYNUM;i ++)
@@ -43,36 +11,39 @@ Player::Player(int _id) : m_id(_id)
 	}
 }
 
-void Player::tick(Agent * _agent) const
+void Player::tick() const
 {
-	bool move = false;
+	if(m_agent)
+	{
+		bool move = false;
 
-	if(isKeyDown(KEY_UP))
-	{
-		_agent->push(dl::Vector3D(0, 5000, 0));
-		move = true;
-	}
-	if(isKeyDown(KEY_LEFT))
-	{
-		_agent->push(dl::Vector3D(-5000, 0, 0));
-		move = true;
-	}
-	if(isKeyDown(KEY_DOWN))
-	{
-		_agent->push(dl::Vector3D(0, -5000, 0));
-		move = true;
-	}
-	if(isKeyDown(KEY_RIGHT))
-	{
-		_agent->push(dl::Vector3D(5000, 0, 0));
-		move = true;
-	}
+		if(isKeyDown(KEY_UP))
+		{
+			m_agent->push(dl::Vector3D(0, 5000, 0));
+			move = true;
+		}
+		if(isKeyDown(KEY_LEFT))
+		{
+			m_agent->push(dl::Vector3D(-5000, 0, 0));
+			move = true;
+		}
+		if(isKeyDown(KEY_DOWN))
+		{
+			m_agent->push(dl::Vector3D(0, -5000, 0));
+			move = true;
+		}
+		if(isKeyDown(KEY_RIGHT))
+		{
+			m_agent->push(dl::Vector3D(5000, 0, 0));
+			move = true;
+		}
 
-	if(!move)
-		_agent->dampen(5000);
+		if(!move)
+			m_agent->dampen(5000);
 
-	if(isKeyDown(KEY_JUMP))
-		_agent->jump(1300);
+		if(isKeyDown(KEY_JUMP))
+			m_agent->jump(1300);
+	}
 }
 
 int Player::getId() const
@@ -112,4 +83,36 @@ void Player::setKeyUp(Key _key)
 {
 	if(_key != Key::KEY_INVALID)
 		m_keyStates[(int)_key] = false;
+}
+
+
+packet::Player::Player(const ::Player * _player) : packet::Base(PACKETID)
+{
+	playerId = _player->m_id;
+
+	strncpy(name, _player->m_name.c_str(), packet::maxNameLength);
+	name[packet::maxNameLength] = '\0';
+
+	//followedAgentId = _player->m_followedAgent ? _player->m_followedAgent->getId() : -1;
+
+	for(int i = 0;i < ::Player::KEYNUM;i ++)
+	{
+		keyStates[i] = _player->m_keyStates[i];
+	}
+}
+void packet::Player::update(::Player * _player, const World & _world) const
+{
+	_player->m_name = name;
+
+	/*
+	if((_player->m_followedAgent && followedAgentId != _player->m_followedAgent->getId()) || (!_player->m_followedAgent && followedAgentId != -1))
+	{
+		_player->m_followedAgent = _world.getAgent(followedAgentId);
+	}
+	*/
+
+	for(int i = 0;i < ::Player::KEYNUM;i ++)
+	{
+		_player->m_keyStates[i] = keyStates[i];
+	}
 }

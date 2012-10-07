@@ -8,6 +8,8 @@
 
 class TileSet : public dl::Texture
 {
+	int m_tileSize;
+
   public:
 
 	TileSet();
@@ -17,6 +19,9 @@ class TileSet : public dl::Texture
 	dl::FloatRect getTile(int _index) const;
 
 	dl::FloatRect getTile(dl::IntRect _pixels) const;
+
+	int getTileSize();
+	void setTileSize(int _tileSize);
 };
 
 #endif

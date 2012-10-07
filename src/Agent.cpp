@@ -40,8 +40,19 @@ void packet::Agent::update(::Agent * _agent) const
 }
 
 
-AgentController::AgentController()
+AgentController::AgentController() : m_agent(0)
 {
+}
+
+Agent * AgentController::getAgent()
+{
+	return m_agent;
+}
+void AgentController::setAgent(Agent * _agent)
+{
+	m_agent = _agent;
+
+	_agent->setController(this);
 }
 
 
@@ -59,12 +70,12 @@ Agent::Agent(int _id) : m_id(_id),
 float Agent::dt((float)1/60);
 dl::Vector3D Agent::gravity(0, 0, (float)-26);
 
-void Agent::tick()
+void Agent::tick(const Terrain & _terrain)
 {
 	if(m_controller)
-		m_controller->tick(this);
+		m_controller->tick();
 	else
-		dampen(5000);
+		dampen(5000); //Default controller action
 
 	m_velocity += gravity*dt;
 
@@ -86,9 +97,16 @@ void Agent::tick()
 	if(m_position.y < -10) {m_position.y = -10;}
 	*/
 
-	if(m_position.z < 0)
+	float groundHeight = -100;
+
+	if(Tile * tile = _terrain.getTile(floor(m_position.x), floor(m_position.y)))
 	{
-		m_position.z = 0;
+		groundHeight = tile->getHeight();
+	}
+
+	if(m_position.z < groundHeight)
+	{
+		m_position.z = groundHeight;
 		m_velocity.k = 0;
 
 		m_onGround = true;

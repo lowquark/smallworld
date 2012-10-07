@@ -2,13 +2,16 @@
 #define WORLD_H
 
 #include "Agent.h"
+#include "Terrain.h"
 
 #include <vector>
 #include <iostream>
 
-class World// : public LuaObject
+class World
 {
 	std::vector<Agent *> m_agentList;
+
+	Terrain m_terrain;
 
   public:
 
@@ -25,6 +28,8 @@ class World// : public LuaObject
 	int getAgentId(const Agent * _agent) const;						//Returns the index of a given agent.  Returns -1 if not found.
 	const std::vector<Agent *> & getAgentList() const;
 	void clearAgents();
+
+	const Terrain & getTerrain() const;
 };
 
 #endif

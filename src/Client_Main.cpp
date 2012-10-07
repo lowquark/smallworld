@@ -61,6 +61,7 @@ bool connectToServer(const std::string & _ipStr, int _port)
 			server = 0;
 
 			enet_host_destroy(host); //Clean up the host object
+			host = 0;
 
 			cout << "Connection timed out." << endl;
 		}
@@ -142,7 +143,7 @@ bool joinServer(const std::string & _name)
 	packet::JoinResponse response;
 	if(waitForPacket<packet::JoinResponse>(&response, NET_TIMEOUT))
 	{
-		//If we're good to go, wait for more player packets.
+		//We're good to join the game
 		if(response.isOk())
 		{
 			cout << "Success!" << endl;
@@ -150,17 +151,19 @@ bool joinServer(const std::string & _name)
 			if(strlen(response.message) != 0)
 				cout << "Message: " << response.message << endl;
 
-			cout << "Our player id: " << response.playerId << endl;
+			cout << "Assigned player id: " << response.playerId << endl;
 
 			ourPlayer = game.addPlayer(_name, response.playerId);
 
 			if(response.agentId != -1)
 			{
-				cout << "Our agent id: " << response.agentId << endl;
+				cout << "Assigned agent id: " << response.agentId << endl;
 
 				Agent * ourAgent = game.addAgent(_name, response.agentId);
 
-				ourAgent->setController(ourPlayer);
+				ourPlayer->setAgent(ourAgent);
+
+				gameRenderer.setFollowedAgent(ourAgent);
 			}
 
 			return true;
@@ -303,7 +306,7 @@ void printUsage()
 	cout << "  -h, --help                           Display this help and exit" << endl;
 }
 
-bool parseOption(int _argc, const char ** _argv)
+bool parseOption(int _argc, char ** _argv)
 {
 	string option = _argv[0];
 	if(option == "--connect" || option == "-c")
@@ -353,9 +356,9 @@ bool parseOption(int _argc, const char ** _argv)
 	return false;
 }
 
-bool parseOptions(int _argc, const char ** _argv)
+bool parseOptions(int _argc, char ** _argv)
 {
-	const char ** prevOption = 0;
+	char ** prevOption = 0;
 	int argNum = 1;
 	for(int i = 0;i < _argc;i ++)
 	{
@@ -389,7 +392,7 @@ bool parseOptions(int _argc, const char ** _argv)
 	return true;
 }
 
-int main(int _argc, const char ** _argv)
+int main(int _argc, char ** _argv)
 {
 	//Parse the command line flags
 	if(!parseOptions(_argc, _argv))
@@ -404,7 +407,7 @@ int main(int _argc, const char ** _argv)
 
 		Agent * ourAgent = game.addAgent("Dave");
 
-		ourAgent->setController(ourPlayer);
+		ourPlayer->setAgent(ourAgent);
 
 		gameRenderer.setFollowedAgent(ourAgent);
 		gameRenderer.createWindow(width, height, fullscreen);
@@ -428,7 +431,6 @@ int main(int _argc, const char ** _argv)
 
 				if(joinServer("Dave"))
 				{
-					//gameRenderer.setFollowedPlayer(ourPlayer);
 					gameRenderer.createWindow(width, height, fullscreen);
 
 					renderLoop.run(loop, tick, render);

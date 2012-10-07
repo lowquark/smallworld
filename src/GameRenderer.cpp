@@ -57,6 +57,89 @@ void GameRenderer::renderGrid(int _size) const
 	glEnd();
 }
 
+void GameRenderer::renderTileLeftSide(const Tile * _tileA, const Tile * _tileB) const
+{
+	float heightDiff = _tileA->getHeight() - _tileB->getHeight();
+
+	glColor3f(1.0, 1.0, 1.0);
+
+	glDisable(GL_TEXTURE_2D);
+
+	glBegin(GL_QUADS);
+
+		glVertex3f(0.0, 0.0,  0.0);
+		glVertex3f(0.0, 0.0, -heightDiff);
+		glVertex3f(0.0, 1.0, -heightDiff);
+		glVertex3f(0.0, 1.0,  0.0);
+
+	glEnd();
+
+	glEnable(GL_TEXTURE_2D);
+}
+void GameRenderer::renderTileFrontSide(const Tile * _tileA, const Tile * _tileB) const
+{
+	float heightDiff = _tileA->getHeight() - _tileB->getHeight();
+
+	glColor3f(1.0, 1.0, 1.0);
+
+	glDisable(GL_TEXTURE_2D);
+
+	glBegin(GL_QUADS);
+
+		glVertex3f(0.0, 0.0,  0.0);
+		glVertex3f(0.0, 0.0, -heightDiff);
+		glVertex3f(1.0, 0.0, -heightDiff);
+		glVertex3f(1.0, 0.0,  0.0);
+
+	glEnd();
+
+	glEnable(GL_TEXTURE_2D);
+}
+void GameRenderer::renderTileRightSide(const Tile * _tileA, const Tile * _tileB) const
+{
+	float heightDiff = _tileA->getHeight() - _tileB->getHeight();
+
+	glColor3f(1.0, 1.0, 1.0);
+
+	glDisable(GL_TEXTURE_2D);
+
+	glBegin(GL_QUADS);
+
+		glVertex3f(1.0, 0.0,  0.0);
+		glVertex3f(1.0, 0.0, -heightDiff);
+		glVertex3f(1.0, 1.0, -heightDiff);
+		glVertex3f(1.0, 1.0,  0.0);
+
+	glEnd();
+
+	glEnable(GL_TEXTURE_2D);
+}
+
+void GameRenderer::renderTile(float _x, float _y, const Tile * _tile, const Tile * _leftNeighbor, const Tile * _frontNeighbor, const Tile * _rightNeighbor) const
+{
+	dl::FloatRect rect(m_tileSet.getTile(_tile->getId()));
+
+	glTranslatef(_x, _y, _tile->getHeight());
+
+	glBegin(GL_QUADS);
+		glTexCoord2f(rect.x,              rect.y              ); glVertex3f(0.0, 1.0, 0.0);
+		glTexCoord2f(rect.x,              rect.y + rect.height); glVertex3f(0.0, 0.0, 0.0);
+		glTexCoord2f(rect.x + rect.width, rect.y + rect.height); glVertex3f(1.0, 0.0, 0.0);
+		glTexCoord2f(rect.x + rect.width, rect.y              ); glVertex3f(1.0, 1.0, 0.0);
+	glEnd();
+
+	if(_leftNeighbor && _tile->getHeight() > _leftNeighbor->getHeight())
+		renderTileLeftSide(_tile, _leftNeighbor);
+
+	if(_frontNeighbor && _tile->getHeight() > _frontNeighbor->getHeight())
+		renderTileFrontSide(_tile, _frontNeighbor);
+
+	if(_rightNeighbor && _tile->getHeight() > _rightNeighbor->getHeight())
+		renderTileRightSide(_tile, _rightNeighbor);
+
+	glTranslatef(-_x, -_y, -_tile->getHeight());
+}
+
 void GameRenderer::renderTerrain() const
 {
 	m_tileSet.bind();
@@ -64,33 +147,18 @@ void GameRenderer::renderTerrain() const
 	glColor3f(1.0, 1.0, 1.0);
 	glEnable(GL_TEXTURE_2D);
 
-	for(int i = -15;i <= 15;i ++)
+	for(int i = 0;i < m_game.getWorld().getTerrain().getWidth();i ++)
 	{
-		for(int j = -15;j <= 15;j ++)
+		for(int j = 0;j < m_game.getWorld().getTerrain().getLength();j ++)
 		{
-			dl::FloatRect rect;
+			Tile * tile = m_game.getWorld().getTerrain().getTile(i, j);
 
-			if(i == 0 && ( j > 1 || j < -1) && j % 2 != 0)
-				rect = m_tileSet.getTile(dl::IntRect(40, 0, 10, 10));
-		
-			else if(j == 0 && (i > 1 || i < -1) && i % 2 != 0)
-				rect = m_tileSet.getTile(dl::IntRect(30, 0, 10, 10));
-
-			else if((i <= 1 && i >= -1) || (j <= 1 && j >= -1))
-				rect = m_tileSet.getTile(dl::IntRect(20, 0, 10, 10));
-
-			else if((i <= 2 && i >= -2) || (j <= 2 && j >= -2))
-				rect = m_tileSet.getTile(dl::IntRect(10, 0, 10, 10));
-
-			else
-				rect = m_tileSet.getTile(dl::IntRect(0, 0, 10, 10));
-
-			glBegin(GL_QUADS);
-				glTexCoord2f(rect.x,              rect.y              ); glVertex3f(i - .5, j + .5, 0.0);
-				glTexCoord2f(rect.x,              rect.y + rect.height); glVertex3f(i - .5, j - .5, 0.0);
-				glTexCoord2f(rect.x + rect.width, rect.y + rect.height); glVertex3f(i + .5, j - .5, 0.0);
-				glTexCoord2f(rect.x + rect.width, rect.y              ); glVertex3f(i + .5, j + .5, 0.0);
-			glEnd();
+			if(tile)
+			{
+				renderTile(i, j, tile, m_game.getWorld().getTerrain().getTile(i - 1, j    ),
+									   m_game.getWorld().getTerrain().getTile(i,     j - 1),
+									   m_game.getWorld().getTerrain().getTile(i + 1, j    ));
+			}
 		}
 	}
 
@@ -123,9 +191,7 @@ void GameRenderer::renderAgent(const Agent * _agent) const
 		Sprite3D sprite;
 
 		if((dl::Vector2D)_agent->getVelocity() != dl::Vector2D(0, 0))
-		{
 			sprite.setStepping(m_stepping);
-		}
 
 		if(_agent->getDirection().i > 0)
 			if(_agent->getDirection().j > 0)
@@ -148,6 +214,7 @@ void GameRenderer::renderAgent(const Agent * _agent) const
 void GameRenderer::loadTextures()
 {
 	m_tileSet.load("res/local/spritesheet.png");
+	m_tileSet.setTileSize(10);
 	m_agentTexture.load("res/local/agent.png");
 }
 
@@ -156,7 +223,8 @@ GameRenderer::GameRenderer(const Game & _game) : m_camera(dl::Point3D(0, -10, 10
 												 m_viewport(640, 480, 70, .01, 1000), 
 												 m_game(_game), 
 												 m_counter(0), 
-												 m_stepping(false)
+												 m_stepping(false),
+												 m_terrainDLID(0)
 {
 	SDL_Init(0);
 }
@@ -201,7 +269,7 @@ void GameRenderer::tick()
 
 	m_stepping = 10/(m_counter % 20 + 1);
 }
-void GameRenderer::render() const
+void GameRenderer::render()
 {
 	float r = (float)0x87/0xFF;
 	float g = (float)0xCE/0xFF;
@@ -217,7 +285,18 @@ void GameRenderer::render() const
 	//renderAxis(10);
 	//renderGrid(10);
 
-	renderTerrain();
+	if(!m_terrainDLID)
+	{
+		m_terrainDLID = glGenLists(1);
+
+		glNewList(m_terrainDLID, GL_COMPILE_AND_EXECUTE);
+		renderTerrain();
+		glEndList();
+	}
+	else
+	{
+		glCallList(m_terrainDLID);
+	}
 
 	SDL_GL_SwapBuffers();
 }

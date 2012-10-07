@@ -6,7 +6,7 @@ Tile::Tile(int _id, float _height) : m_id(_id), m_height(_height)
 {
 }
 
-int Tile::getId()
+int Tile::getId() const
 {
 	return m_id;
 }
@@ -15,7 +15,7 @@ void Tile::setId(int _id)
 	m_id = _id;
 }
 
-float Tile::getHeight()
+float Tile::getHeight() const
 {
 	return m_height;
 }
@@ -44,7 +44,7 @@ void Terrain::setSize(int _width, int _length)
 		m_tileMap[i] = new Tile * [_length];
 		for(int j = 0;j < _length;j ++)
 		{
-			m_tileMap[i][j] = new Tile(i/4, /*(float)i/10 + (float)j/10*/0);
+			m_tileMap[i][j] = new Tile(i/4, (i > 10 ? -(float)i/10 + (float)j/10: (float)i/10 + (float)j/10));
 		}
 	}
 

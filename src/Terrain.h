@@ -12,10 +12,10 @@ class Tile
 
 	Tile(int _id, float _height = 0);
 
-	int getId();
+	int getId() const;
 	void setId(int _id);
 
-	float getHeight();
+	float getHeight() const;
 	void setHeight(float _height);
 };
 

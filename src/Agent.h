@@ -2,6 +2,7 @@
 #define AGENT_H
 
 #include "Packet.h"
+#include "Terrain.h"
 
 #include <DL/Geom.h>
 
@@ -35,11 +36,18 @@ namespace packet
 
 class AgentController
 {
+  protected:
+
+	Agent * m_agent;
+
   public:
 
 	AgentController();
 
-	virtual void tick(Agent * _agent) const = 0;
+	virtual void tick() const = 0;
+
+	Agent * getAgent();
+	void setAgent(Agent * _agent);
 };
 
 class Agent
@@ -75,7 +83,7 @@ class Agent
 	static float dt;				//1/60th of a second
 	static dl::Vector3D gravity;	//Gravity
 
-	void tick();
+	void tick(const Terrain & _terrain);
 
 	void push(const dl::Vector3D _force);	//Accelerates based on the force(N) and weight(kg)
 	void dampen(float _force);				//Applies a force in the opposite direction of horizontal motion

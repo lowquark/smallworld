@@ -29,6 +29,8 @@ class GameRenderer
 	int m_counter; //Counts every tick from 0 to 60 and loops
 	bool m_stepping; //Whether to make the agents step or not
 
+	GLuint m_terrainDLID;
+
 
 	dl::Point3D getFollowCameraPos(const Agent * _agent) const;
 
@@ -36,6 +38,11 @@ class GameRenderer
 	void renderAxis(float _length, dl::Point3D _pos = dl::Point3D(0, 0, 0)) const;
 	void renderGrid(int _size) const;
 
+	void renderTileLeftSide(const Tile * _tileA, const Tile * _tileB) const;
+	void renderTileFrontSide(const Tile * _tileA, const Tile * _tileB) const;
+	void renderTileRightSide(const Tile * _tileA, const Tile * _tileB) const;
+
+	void renderTile(float _x, float _y, const Tile * _tile, const Tile * _leftNeighbor, const Tile * _frontNeighbor, const Tile * _rightNeighbor) const;
 	void renderTerrain() const;
 
 	void renderAgents() const;
@@ -51,7 +58,7 @@ class GameRenderer
 	void createWindow(int _width, int _height, bool _fullscreen);
 
 	void tick();
-	void render() const;
+	void render();
 
 	void follow(const Agent * _agent, bool _smoothTransition = false);
 
