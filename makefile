@@ -1,11 +1,8 @@
 V=0.1
 
-BaseObjects := Agent.o Player.o Terrain.o World.o Game.o Packet.o
-ClientObjects := $(BaseObjects) TileSet.o Sprite3D.o GameRenderer.o Client_Main.o
-ServerObjects := $(BaseObjects) Server_Main.o
-
-ClientObjects := $(patsubst %.o, build/%.o, $(ClientObjects))
-ServerObjects := $(patsubst %.o, build/%.o, $(ServerObjects))
+BaseObjects := Agent Player Terrain World Game Packet
+ClientObjects := $(BaseObjects) TileSet Sprite3D GameRenderer Client_Main
+ServerObjects := $(BaseObjects) Server_Main
 
 SRCDIR=src/
 BUILDDIR=build/
@@ -31,30 +28,34 @@ client: smallworld smallworld.exe
 server: smallworld-server smallworld-server.exe
 
 
-smallworld: $(ClientObjects)
+smallworld: $(patsubst %, build/%.o, $(ClientObjects))
 	$(CXX) -o $@ $^ -L../lib/ -lGL -lGLU -lSDL -lIL -Wl,-Bstatic -lenet -ldgeom -ldrenderloop -ldtime -ldengine -Wl,-Bdynamic
 
-smallworld-server: $(ServerObjects)
+smallworld-server: $(patsubst %, build/%.o, $(ServerObjects))
 	$(CXX) -o $@ $^ -L../lib/ -llua -Wl,-Bstatic -lenet -ldgeom -ldtime -Wl,-Bdynamic
 
 $(BUILDDIR)%.o: $(SRCDIR)%.cpp
 	$(CXX) -std=c++0x -c -o $@ $< $(CFLAGS) -I../include/
 
-smallworld.exe: $(ClientObjects:.o=.obj)
+smallworld.exe: $(patsubst %, build/%.obj, $(ClientObjects))
 	$(WINCXX) -o $@ $^ -L../lib/i486-mingw32/ -static-libgcc -static-libstdc++ -Wl,-Bstatic -lenet -ldgeom -ldrenderloop -ldtime -ldengine -Wl,-Bdynamic -lws2_32 -lwinmm -lmingw32 -lSDLmain -lSDL -lDevIL -lopengl32 -lglu32 
 
-smallworld-server.exe: $(ServerObjects:.o=.obj)
+smallworld-server.exe: $(patsubst %, build/%.obj, $(ServerObjects))
 	$(WINCXX) -o $@ $^ -L../lib/i486-mingw32/ -static-libgcc -static-libstdc++ -Wl,-Bstatic -lenet -ldgeom -ldtime -Wl,-Bdynamic -lws2_32 -lwinmm -lmingw32 -llua
 
-build/%.obj: src/%.cpp
+build/%.obj: $(SRCDIR)%.cpp
 	$(WINCXX) -std=c++0x -c -o $@ $< $(CFLAGS) -DWIN32 -I../include/
 
--include .depends
+-include $(SRCDIR).depends
 
 .PHONY: depends
 depends:
-	@rm -f .depends
-	@find . -name "*.cpp" -exec g++ -std=c++11 -MM {} \; >> .depends
+	@rm -f $(SRCDIR).depends
+	@for x in $(sort $(BaseObjects) $(ClientObjects) $(ServerObjects));\
+	  do\
+	    echo $$x;\
+		g++ -std=c++11 -MT $(BUILDDIR)$$x.o -MM $(SRCDIR)$$x.cpp >> $(SRCDIR).depends ;\
+	  done
 
 #Clean up
 .PHONY: clean

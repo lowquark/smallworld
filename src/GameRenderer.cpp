@@ -61,63 +61,65 @@ void GameRenderer::renderTileLeftSide(const Tile * _tileA, const Tile * _tileB) 
 {
 	float heightDiff = _tileA->getHeight() - _tileB->getHeight();
 
-	glColor3f(1.0, 1.0, 1.0);
+	glColor3f(0.6, 0.6, 0.6);
 
-	glDisable(GL_TEXTURE_2D);
+	//glDisable(GL_TEXTURE_2D);
 
 	glBegin(GL_QUADS);
 
-		glVertex3f(0.0, 0.0,  0.0);
+		glVertex3f(0.0, 0.0, 0.0);
 		glVertex3f(0.0, 0.0, -heightDiff);
 		glVertex3f(0.0, 1.0, -heightDiff);
-		glVertex3f(0.0, 1.0,  0.0);
+		glVertex3f(0.0, 1.0, 0.0);
 
 	glEnd();
 
-	glEnable(GL_TEXTURE_2D);
+	//glEnable(GL_TEXTURE_2D);
 }
 void GameRenderer::renderTileFrontSide(const Tile * _tileA, const Tile * _tileB) const
 {
 	float heightDiff = _tileA->getHeight() - _tileB->getHeight();
 
-	glColor3f(1.0, 1.0, 1.0);
+	glColor3f(0.8, 0.8, 0.8);
 
-	glDisable(GL_TEXTURE_2D);
+	//glDisable(GL_TEXTURE_2D);
 
 	glBegin(GL_QUADS);
 
-		glVertex3f(0.0, 0.0,  0.0);
+		glVertex3f(0.0, 0.0, 0.0);
 		glVertex3f(0.0, 0.0, -heightDiff);
 		glVertex3f(1.0, 0.0, -heightDiff);
-		glVertex3f(1.0, 0.0,  0.0);
+		glVertex3f(1.0, 0.0, 0.0);
 
 	glEnd();
 
-	glEnable(GL_TEXTURE_2D);
+	//glEnable(GL_TEXTURE_2D);
 }
 void GameRenderer::renderTileRightSide(const Tile * _tileA, const Tile * _tileB) const
 {
 	float heightDiff = _tileA->getHeight() - _tileB->getHeight();
 
-	glColor3f(1.0, 1.0, 1.0);
+	glColor3f(0.9, 0.9, 0.9);
 
-	glDisable(GL_TEXTURE_2D);
+	//glDisable(GL_TEXTURE_2D);
 
 	glBegin(GL_QUADS);
 
-		glVertex3f(1.0, 0.0,  0.0);
+		glVertex3f(1.0, 0.0, 0.0);
 		glVertex3f(1.0, 0.0, -heightDiff);
 		glVertex3f(1.0, 1.0, -heightDiff);
-		glVertex3f(1.0, 1.0,  0.0);
+		glVertex3f(1.0, 1.0, 0.0);
 
 	glEnd();
 
-	glEnable(GL_TEXTURE_2D);
+	//glEnable(GL_TEXTURE_2D);
 }
 
 void GameRenderer::renderTile(float _x, float _y, const Tile * _tile, const Tile * _leftNeighbor, const Tile * _frontNeighbor, const Tile * _rightNeighbor) const
 {
 	dl::FloatRect rect(m_tileSet.getTile(_tile->getId()));
+
+	glColor3f(1.0, 1.0, 1.0);
 
 	glTranslatef(_x, _y, _tile->getHeight());
 
