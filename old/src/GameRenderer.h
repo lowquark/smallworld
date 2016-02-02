@@ -15,9 +15,8 @@
 
 class GameRenderer
 {
-	dl::Scene m_scene;
 	dl::Camera m_camera;
-	dl::Viewport m_viewport;
+	dl::Viewport3D m_viewport;
 
 	const Game & m_game; //Game to render
 
@@ -41,8 +40,9 @@ class GameRenderer
 	void renderTileLeftSide(const Tile * _tileA, const Tile * _tileB) const;
 	void renderTileFrontSide(const Tile * _tileA, const Tile * _tileB) const;
 	void renderTileRightSide(const Tile * _tileA, const Tile * _tileB) const;
+	void renderTile(int _x, int _y, const Tile * _tile, const Tile * _leftNeighbor, const Tile * _frontNeighbor, const Tile * _rightNeighbor) const;
 
-	void renderTile(float _x, float _y, const Tile * _tile, const Tile * _leftNeighbor, const Tile * _frontNeighbor, const Tile * _rightNeighbor) const;
+	void renderChunk(int _x, int _y, const Chunk * _chunk) const;
 	void renderTerrain() const;
 
 	void renderAgents() const;

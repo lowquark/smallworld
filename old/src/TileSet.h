@@ -1,10 +1,12 @@
 #ifndef TILESET_H
 #define TILESET_H
 
-#include <DL/DEngine.h>
+#include <DL/DEngine/Texture.h>
 #include <DL/Geom.h>
 
 #include <string>
+
+#include <iostream>
 
 class TileSet : public dl::Texture
 {

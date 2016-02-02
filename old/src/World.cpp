@@ -3,7 +3,7 @@
 using namespace std;
 
 
-World::World() : m_terrain(20, 20)
+World::World() : m_terrain(2, 1)
 {
 }
 World::~World()

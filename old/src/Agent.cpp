@@ -97,12 +97,7 @@ void Agent::tick(const Terrain & _terrain)
 	if(m_position.y < -10) {m_position.y = -10;}
 	*/
 
-	float groundHeight = -100;
-
-	if(Tile * tile = _terrain.getTile(floor(m_position.x), floor(m_position.y)))
-	{
-		groundHeight = tile->getHeight();
-	}
+	float groundHeight = _terrain.getTile(floor(m_position.x), floor(m_position.y)).getHeight();
 
 	if(m_position.z < groundHeight)
 	{

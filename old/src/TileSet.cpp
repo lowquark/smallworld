@@ -1,6 +1,8 @@
 #include "TileSet.h"
 
-TileSet::TileSet() : Texture()
+using namespace std;
+
+TileSet::TileSet() : Texture(), m_tileSize(16)
 {
 }
 TileSet::TileSet(const std::string & _path) : Texture(_path)
@@ -29,11 +31,11 @@ dl::FloatRect TileSet::getTile(dl::IntRect _pixels) const
 {
 	dl::FloatRect ret;
 
-	ret.x = (float)_pixels.x/getWidth() + .001;
-	ret.y = (float)_pixels.y/getHeight() + .001;
+	ret.x = (float)_pixels.x/getWidth() + .0001;
+	ret.y = (float)_pixels.y/getHeight() + .0001;
 
-	ret.width = (float)_pixels.width/getWidth() - .002;
-	ret.height = (float)_pixels.height/getHeight() - .002;
+	ret.width = (float)_pixels.width/getWidth() - .0002;
+	ret.height = (float)_pixels.height/getHeight() - .0002;
 
 	return ret;
 }

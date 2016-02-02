@@ -67,10 +67,10 @@ void GameRenderer::renderTileLeftSide(const Tile * _tileA, const Tile * _tileB) 
 
 	glBegin(GL_QUADS);
 
-		glVertex3f(0.0, 0.0, 0.0);
-		glVertex3f(0.0, 0.0, -heightDiff);
-		glVertex3f(0.0, 1.0, -heightDiff);
 		glVertex3f(0.0, 1.0, 0.0);
+		glVertex3f(0.0, 1.0, -heightDiff);
+		glVertex3f(0.0, 0.0, -heightDiff);
+		glVertex3f(0.0, 0.0, 0.0);
 
 	glEnd();
 
@@ -114,8 +114,7 @@ void GameRenderer::renderTileRightSide(const Tile * _tileA, const Tile * _tileB)
 
 	//glEnable(GL_TEXTURE_2D);
 }
-
-void GameRenderer::renderTile(float _x, float _y, const Tile * _tile, const Tile * _leftNeighbor, const Tile * _frontNeighbor, const Tile * _rightNeighbor) const
+void GameRenderer::renderTile(int _x, int _y, const Tile * _tile, const Tile * _leftNeighbor, const Tile * _frontNeighbor, const Tile * _rightNeighbor) const
 {
 	dl::FloatRect rect(m_tileSet.getTile(_tile->getId()));
 
@@ -142,6 +141,22 @@ void GameRenderer::renderTile(float _x, float _y, const Tile * _tile, const Tile
 	glTranslatef(-_x, -_y, -_tile->getHeight());
 }
 
+void GameRenderer::renderChunk(int _x, int _y, const Chunk * _chunk) const
+{
+	glTranslatef(_x*Chunk::SIZE, _y*Chunk::SIZE, 0.0);
+
+	for(int i = 0;i < Chunk::SIZE;i ++)
+	{
+		for(int j = 0;j < Chunk::SIZE;j ++)
+		{
+			Tile tile = _chunk->getTile(i, j);
+
+			renderTile(i, j, &tile, 0, 0, 0);
+		}
+	}
+
+	glTranslatef(-_x*Chunk::SIZE, -_y*Chunk::SIZE, 0.0);
+}
 void GameRenderer::renderTerrain() const
 {
 	m_tileSet.bind();
@@ -153,13 +168,11 @@ void GameRenderer::renderTerrain() const
 	{
 		for(int j = 0;j < m_game.getWorld().getTerrain().getLength();j ++)
 		{
-			Tile * tile = m_game.getWorld().getTerrain().getTile(i, j);
+			Chunk * chunk = m_game.getWorld().getTerrain().getChunk(i, j);
 
-			if(tile)
+			if(chunk)
 			{
-				renderTile(i, j, tile, m_game.getWorld().getTerrain().getTile(i - 1, j    ),
-									   m_game.getWorld().getTerrain().getTile(i,     j - 1),
-									   m_game.getWorld().getTerrain().getTile(i + 1, j    ));
+				renderChunk(i, j, chunk);
 			}
 		}
 	}
@@ -280,7 +293,10 @@ void GameRenderer::render()
 	glClearColor(r, g, b, 0.0);
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
-	m_scene.render(m_camera, m_viewport);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+
+	m_camera.setup3D(m_viewport);
 
 	renderAgents();
 

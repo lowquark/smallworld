@@ -1,0 +1,54 @@
+
+
+=== Requirements Document ===
+
+
+== Zone Requirements ==
+
+Zones shall perform all processing of the game elements inside them.
+
+Zones shall generate render signals via an abstract view class.
+
+Zones shall be identified by a server address and zone id.
+
+Zones shall specify a target destination for an entity to be moved to, which
+must then be polled and facilitated externally.
+
+Zones shall provide serialization data for objects that must be moved.
+Zones shall accept serialization data and add objects accordingly.
+
+
+== Server Requirements ==
+
+Servers shall immediately add a player to a zone upon connection.
+
+Servers shall facilitate .
+
+
+
+
+=== Requirements Document MKII ===
+
+
+== Game Server Requirements ==
+
+Upon connection, game server shall notify world script.
+-- OnConnect( pobject : table )
+
+Upon disconnection, game server shall notify world script.
+-- OnDisconnect( pobject : table )
+
+Upon receipt of command data, game server shall notify world script.
+-- OnInput( pobject : table, command : table )
+
+
+== World Script Requirements ==
+
+A given world script shall support an API for player feedback purposes
+
+-- world:SetMesh(eid, meshid)
+-- world:SetMeshPosition(eid, x, y, z)
+-- world:SetMeshAnimation(eid, aid, fid, reset : bool)
+
+-- world:UpdateTerrain
+

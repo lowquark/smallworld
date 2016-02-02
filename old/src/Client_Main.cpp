@@ -32,6 +32,11 @@ string ip = "";
 int port = 7007;
 int NET_TIMEOUT = 10000;
 
+bool connectedToServer()
+{
+	return host && server;
+}
+
 bool connectToServer(const std::string & _ipStr, int _port)
 {
 	cout << "Attempting to connect to " << _ipStr << " over port " << _port << "... " << flush;
@@ -268,7 +273,7 @@ void loop()
 {
 	handleEvents();
 
-	if(server && host)
+	if(connectedToServer())
 		handleNetwork();
 }
 
@@ -278,7 +283,7 @@ void tick()
 
 	gameRenderer.tick();
 
-	if(server && host)
+	if(connectedToServer())
 	{
 		if(ourPlayer)
 		{
@@ -394,6 +399,7 @@ bool parseOptions(int _argc, char ** _argv)
 
 int main(int _argc, char ** _argv)
 {
+	cout << (float)0xFFFFFFFF << endl;
 	//Parse the command line flags
 	if(!parseOptions(_argc, _argv))
 	{
