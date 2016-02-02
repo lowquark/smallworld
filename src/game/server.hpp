@@ -18,9 +18,11 @@ void Init();
 void Open(uint16_t port);
 void Deinit();
 
+// Adds a zone to the server, addressed by name
 void AddZone(const std::string & name, Zone * zone, bool pri = false);
 
-void CreatePlayer(const std::string & zone_name, View * view, bool spectate = false);
+// Creates a player for the server, adds them to primary zone
+void CreatePlayer(const std::string & name, View * view, bool spectate = false);
 
 void Tick();
 

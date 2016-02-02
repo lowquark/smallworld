@@ -22,7 +22,7 @@ namespace server
 {
 
 std::map<std::string, Zone *> zones;
-Zone * default_zone = 0;
+Zone * primary_zone = 0;
 
 std::vector<Player *> players;
 
@@ -66,7 +66,7 @@ void AddZone(const std::string & name, Zone * zone, bool pri)
     zones.erase(name);
 
   if(pri)
-    default_zone = zone;
+    primary_zone = zone;
 }
 
 void CreatePlayer(const std::string & name, View * view, bool spectate)
@@ -76,7 +76,7 @@ void CreatePlayer(const std::string & name, View * view, bool spectate)
   player->name = name;
   player->view = view;
   player->spectator = spectate;
-  default_zone->AddPlayer(player);
+  primary_zone->AddPlayer(player);
 }
 
 void Tick()

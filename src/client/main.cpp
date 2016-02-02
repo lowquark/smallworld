@@ -32,13 +32,13 @@ int main(int argc, char ** argv)
   game::Zone * z = new game::Zone("some_script.lua");
   game::server::AddZone("Lumbridge", z, true);
 
-  game::server::CreatePlayer("massive_weed", &view);
+  game::server::CreatePlayer("noob", &view);
 
   game::server::Open(8888);
 
+  game::server::Deinit();
+
   delete z;
   z = 0;
-
-  game::server::Deinit();
 }
 

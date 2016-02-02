@@ -7,7 +7,6 @@
 #include <map>
 
 #include <game/resource.hpp>
-#include <game/Player.hpp>
 
 namespace game
 {
